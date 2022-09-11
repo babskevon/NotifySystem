@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+	{% load static %}
+	<div class="col-md-12 col-sm-12">
+		<div class="card">
+			<div class="card-header">
+				<strong class="card-title">Staff Users</strong>
+			</div>
+			<div class="card-body">
+				<table id="staffid" class="table table-striped table-bordered">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Contact</th>
+							<th>Department</th>
+							<th>Status</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for lect in lects %}
+						<tr>
+							<td>
+								<small>
+									{{lect.member.first_name}} {{lect.member.last_name}}
+								</small>
+							</td>
+							<td>
+								<small>
+									{{lect.member.contact}}
+								</small>
+							</td>
+							<td>
+								<small>
+									{{lect.depart}}
+								</small>
+							</td>
+							<td style="text-align: center;">
+								{% if lect.approved == "Yes" %}
+								<small>
+									approved
+								</small>
+								{% else %}
+								<small>Pending approval</small>
+								{% endif %}
+							</td>
+							<td style="text-align:center;">
+								<div class="btn-group">
+									{% if lect.approved == "Yes" %}
+									<button class="btn btn-primary" title="deapprove user" onclick="depprove('{{lect.member.contact}}')">
+										<i class="fa fa-eye"></i>
+									</button>
+									<button class="btn btn-danger" title="delete" onclick="Remove('{{lect.member.contact}}')">
+										<i class="fa fa-times-circle"></i>
+									</button>
+									<button class="btn btn-dark" onclick="Makeadmin('{{lect.member.contact}}')">
+										<i class="fa fa-plus-circle"></i>
+									</button>
+									{% else %}
+									<button class="btn btn-success" onclick="approve('{{lect.member.contact}}')" title="Approve User">
+										<i class="fa fa-check-circle"></i>
+									</button>
+									<button class="btn btn-danger" title="delete" onclick="Remove('{{lect.member.contact}}')">
+										<i class="fa fa-times-circle"></i>
+									</button>
+									<button class="btn btn-dark" onclick="Makeadmin('{{lect.member.contact}}')">
+										<i class="fa fa-plus-circle"></i>
+									</button>
+									{% endif %}
+								</div>
+							</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-12 col-sm-12">
+		<div class="card">
+			<div class="card-header">
+				<strong class="card-title">Students</strong>
+			</div>
+			<div class="card-body">
+				<table id="stdid" class="table table-striped table-bordered">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>RegNo</th>
+							<th>Year</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for std in students %}
+						<tr>
+							<td>
+								{{std.member.first_name}} {{std.member.last_name}}
+							</td>
+							<td>{{std.member.reg_no}}</td>
+							<td>{{std.studyear}}</td>
+							<td style="text-align: center;">
+								<div class="btn-group">
+									<button class="btn btn-danger" onclick="StudentDel('{{std.member.contact}}')">
+										<i class="fa fa-times-circle"></i>
+									</button>
+								</div>
+							</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- <script src="{% static 'js/jquery-3.2.1.min.js'%}"></script> -->
+{% endblock %}
+
+{% block jscript %}
+    <script src="{% static 'js/lib/data-table/datatables.min.js' %}"></script>
+    <script src="{% static 'js/lib/data-table/dataTables.bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/lib/data-table/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'js/lib/data-table/buttons.bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/lib/data-table/jszip.min.js' %}"></script>
+    <script src="{% static 'js/lib/data-table/pdfmake.min.js' %}"></script>
+    <script src="{% static 'js/lib/data-table/vfs_fonts.js' %}"></script>
+    <script src="{% static 'js/lib/data-table/buttons.html5.min.js' %}"></script>
+    <script src="{% static 'js/lib/data-table/buttons.print.min.js' %}"></script>
+    <script src="{% static 'js/lib/data-table/buttons.colVis.min.js' %}"></script>
+    <script src="{% static 'js/lib/data-table/datatables-init.js' %}"></script>
+<script type="text/javascript">
+	// function to approve user
+	function approve(contact){
+		$.post("/admins/",{
+			csrfmiddlewaretoken:'{{csrf_token}}',
+			contact:contact
+		},function(data){
+			if(data == 1){
+				window.location.replace("/");
+			}else{
+				alert(data);
+			}
+		});
+	}
+	// end of function
+	// function to delete user from system
+	function Remove(contact){
+		let rem = confirm("Do you want to delete this user?");
+		if(rem == true){
+			$.post("/admins/",{
+				csrfmiddlewaretoken:'{{csrf_token}}',
+				contactd:contact
+			},function(data){
+				if(data == 1){
+					window.location.replace("/");
+				}
+				else{
+					alert(data);
+				}
+			});
+		}
+	}
+	// end of function
+
+	// function to diapprove user
+	function depprove(contact) {
+		// body...
+		let decision = confirm("Do you want to diapprove this user?");
+		if(decision == true){
+			$.post("/admins/",{
+				csrfmiddlewaretoken:'{{csrf_token}}',
+				decide:contact
+			},function(data){
+				if(data == 1){
+					window.location.replace("/");
+				}
+				else{
+					alert(data);
+				}
+			});
+		}
+	}
+	// function to delete student
+	function StudentDel(contact) {
+		// body...
+		// alert(contact);
+		let stddl = confirm("Do you want to delete this student");
+		if(stddl == true){
+			$.post("/admins/",{
+				csrfmiddlewaretoken:'{{csrf_token}}',
+				std:contact
+			},function(data){
+				if(data == 1){
+					window.location.replace("/");
+				}
+				else{
+					alert(data);
+				}
+			});
+		}
+	}
+	function Makeadmin(contact){
+		let perm = confirm("Do you want to give user admin access");
+		if(perm == true){
+			$.post("/admins/",{
+				csrfmiddlewaretoken:'{{csrf_token}}',
+				perm:contact
+			},function(data){
+				if(data == 1){
+					window.location.replace("/");
+				}
+				else{
+					alert(data);
+				}
+			});
+		}
+	}
+	$(document).ready(function(){
+		// alert("work");
+		$('#stdid').DataTable();
+		$('#staffid').DataTable();
+	});
+</script>
+{% endblock %}

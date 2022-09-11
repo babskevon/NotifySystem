@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="row">
+	<div class="col-12">
+		<div class="alert  alert-success alert-dismissible fade show" role="alert" style="display:none;">
+			<span class="badge badge-pill badge-success">Success</span>
+			<span class="info"></span>
+			<button class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+	</div>
+	<!-- column student to complete registration -->
+	<div class="col-xs-6 col-sm-6 col-md-6">
+		<!-- card -->
+		<div class="card">
+			<div class="card-header">
+				<strong>Complete / Update Details</strong>
+			</div>
+			<div class="card-body">
+				<div class="form-group">
+					<select class="form-control-sm form-control course">
+						<option value="0">Select Course</option>
+						<option value="Computer Engineering">
+							Computer Engineering
+						</option>
+						<option value="Water Engineering">Water Engineering</option>
+						<option value="Agricultural Mechanisation">
+							Agricultural Mechanisation
+						</option>
+						<option value="Agro-Processing Engineering">
+							Agro-Processing Engineering
+						</option>
+					</select>
+					<label id="course" style="display:none;"></label>
+				</div>
+				<div class="row">
+					<div class="col-sm-6 col-md-6 col-xs-6">
+						<div class="form-group">
+							<select class="form-control-sm form-control year">
+								<option value="0">Study Year</option>
+								<option value="1">1</option>
+								<option value="2">2</option>
+								<option value="3">3</option>
+								<option value="4">4</option>
+							</select>
+							<label id="year" style="display:none;"></label>
+						</div>
+					</div>
+					<div class="col-sm-6 col-md-6 col-xs-6">
+						<div class="form-group">
+							<select class="form-control-sm form-control sem">
+								<option value="0">semester</option>
+								<option value="1">1</option>
+								<option value="2">2</option>
+								<!-- <option>3</option> -->
+								<!-- <option>4</option> -->
+							</select>
+							<label id="sem" style="display:none;"></label>
+						</div>
+					</div>
+				</div>
+				<!-- //row -->
+				<div class="form-group">
+					<input type="text" class="form-control form-control-sm reg" placeholder="RegNo eg BU/UG/1004 or BU/UP/2045">
+					<label id="reg" style="display:none;"></label>
+				</div>
+				<div class="form-group">
+					<select data-placeholder="Course units" multiple class="units">
+						<option value=""></option>
+						{% for subject in subjects %}
+						<option value="{{subject.courseunit}}">
+							{{subject.courseunit}}
+						</option>
+						{% endfor %}
+					</select>
+					<label id="units" style="display:none;"></label>
+				</div>
+
+			</div>
+			<!-- card-body -->
+			<!-- card-footer -->
+			<div class="card-footer">
+				<button type="submit" class="btn btn-primary btn-sm Submit">
+					<i class="fa fa-dot-circle-o"></i> Submit
+				</button>
+				<button type="reset" class="btn btn-danger btn-sm">
+					<i class="fa fa-ban"></i> Reset
+				</button>
+			</div>
+		</div>
+		<!-- end card -->
+	</div>
+	<!-- End column student to complete registration -->
+	<!-- Student details -->
+	<div class="col-xs-6 col-sm-6 col-md-6">
+		<!-- card -->
+		<div class="card">
+			<div class="card-header">
+				<strong>Student Details</strong>
+			</div>
+			<!-- // card-header -->
+			<div class="card-body">
+				<div class="row details">
+					<div class="col-4">
+						Name:
+					</div>
+					<div class="col-8">
+						{{request.user.first_name}} {{request.user.last_name}}
+					</div>
+				</div>
+				<div class="row details">
+					<div class="col-4">
+						Contact:
+					</div>
+					<div class="col-8">
+						{{request.user.contact}}
+					</div>
+				</div>
+				<div class="row details">
+					<div class="col-4">
+						RegNo:
+					</div>
+					<div class="col-8">
+						{{request.user.reg_no}}
+					</div>
+				</div>
+				<div class="row details">
+					<div class="col-4">
+						Course:
+					</div>
+					<div class="col-8">
+						{{details.course}}
+					</div>
+				</div>
+				<div class="row details">
+					<div class="col-4">
+						Year:
+					</div>
+					<div class="col-8">
+						{{details.studyear}}
+					</div>
+				</div>
+				<div class="row details">
+					<div class="col-4">
+						Semister:
+					</div>
+					<div class="col-8">
+						{{details.sem}}
+					</div>
+				</div>
+				<div class="card" style="margin-top: 10px;">
+					<div class="card-header"><strong>Course Units</strong></div>
+					<div class="card-body">
+						<ul>
+							{% for unit in myunits %}
+							<ul>{{unit.courseunit}}</ul>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+				<div class="card" style="margin-top: 10px;">
+					<div class="card-header"><strong>Class Documents</strong></div>
+					<div class="card-body">
+						<ul>
+							{% for note in notes %}
+							<ul>{{note.destiny}}: <a href="{{note.file.url}}">{{note.file}}</a></ul>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- /// card-body -->
+		</div>
+		<!-- End card -->
+	</div>
+	<!-- End student details -->
+	<div class="col-xs-6 col-sm-6 col-md-6">
+		<div class="card">
+			<div class="card-header">
+				<strong>Class Documents</strong>
+			</div>
+		</div>
+	</div>
+</div>
+<style type="text/css">
+	.details > .col-4{
+		font-weight: bolder;
+		/*font-style: ;*/
+		text-transform: uppercase;
+		color: #A9A9A9;
+		/*font-size: 1.5vw;*/
+	}
+	.details > .col-8{
+		text-transform: capitalize;
+		font-weight: 300;
+		color: #989898;
+	}
+	.title{
+		/*text-align: center;*/
+		font-weight: bolder;
+		text-transform: uppercase;
+		color: #A9A9A9;
+		margin-top: 25px;
+	}
+	ul{
+		/*text-align: center;*/
+		list-style-type: disc;
+		color: #989898;
+		text-transform: capitalize;
+
+	}
+</style>
+{% endblock %}
+
+{% block jscript %}
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('.Submit').click(function(){
+			let course = $('.course').val();
+			let units = $('.units').val();
+			let year = $('.year').val();
+			let reg = $('.reg').val().toUpperCase();
+			let sem = $('.sem').val();
+			// alert(typeof (units));
+			let unit = "";
+			for(x in units){
+				unit = unit  +units[x] + " ";
+			}
+			valid = 0;
+			if(course == 0){
+				$('#course').html("Please select course");
+				$('#course').css({"display":"block","color":"red"});
+				valid = valid + 1;
+			}
+			if(year == 0){
+				$('#year').html("Please select year of study");
+				$('#year').css({"display":"block","color":"red"});
+				valid = valid + 1;
+			}
+			if(sem == 0){
+				$('#sem').css({"display":"block","color":"red"});
+				$('#sem').html("Please select semister of study");
+				valid = valid + 1;
+			}
+			if(reg == ""){
+				$('#reg').html("Please enter your regestration number");
+				$('#reg').css({"display":"block","color":"red"});
+				valid = valid + 1;
+			}
+			if(units == null){
+				$('#units').css({"display":"block","color":"red"});
+				$('#units').html("Please select all course units your doing this semister");
+				valid = valid + 1;
+			}
+			if(valid == 0){
+				$.post("/student/",{
+					csrfmiddlewaretoken:'{{csrf_token}}',
+					course:course,
+					units:unit.trim(),
+					year:year,
+					reg:reg,
+					sem:sem
+				},function(data){
+					// $(".alert").css({"display":"block"});
+					// $(".info").html(" " + data);
+					if(data == 1){
+						window.location.replace("/student/");
+					}
+				});
+			}
+		});
+	});
+</script>
+{% endblock %}

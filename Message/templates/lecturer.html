@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+	<!-- Student details -->
+	<div class="col-xs-6 col-sm-6 col-md-6">
+		<!-- card -->
+		<div class="card">
+			<div class="card-header">
+				<strong>Profile</strong>
+			</div>
+			<!-- // card-header -->
+			<div class="card-body">
+				<div class="row details">
+					<div class="col-4">
+						Name:
+					</div>
+					<div class="col-8">
+						{{request.user.first_name}} {{request.user.last_name}}
+					</div>
+				</div>
+				<div class="row details">
+					<div class="col-4">
+						Contact:
+					</div>
+					<div class="col-8">
+						{{request.user.contact}}
+					</div>
+				</div>
+				<div class="row details">
+					<div class="col-4">
+						Depart:
+					</div>
+					<div class="col-8">
+						{{details.depart}}
+					</div>
+				</div>
+				<div class="row details">
+					<div class="col-4">
+						Approved
+					</div>
+					<div class="col-8">
+						{{details.approved}}
+					</div>
+				</div>
+			</div>
+			<!-- /// card-body -->
+		</div>
+		<!-- End card -->
+		<!-- start update card -->
+		<div class="card">
+			<div class="card-header">
+				<strong>Complete / Update Profile</strong>
+			</div>
+			<div class="card-body">
+				<div class="form-group">
+					<select class="form-control depart form-control-sm">
+						<option value="0">Department</option>
+						<option value="Computer Engineering">
+							Computer Engineering
+						</option>
+					</select>
+					<label id="depart" style="display:none;"></label>
+				</div>
+			</div>
+			<div class="card-footer">
+				<div type="submit" class="btn btn-primary btn-sm Submit">
+					<i class="fa fa-dot-circle-o"></i> Submit
+				</div>
+				<button type="reset" class="btn btn-danger btn-sm">
+					<i class="fa fa-ban"></i> Reset
+				</button>
+			</div>
+		</div>
+	</div>
+	<!-- End student details -->
+	<!-- Message history -->
+	<div class="col-xs-6 col-sm-6 col-md-6">
+		<div class="card">
+			<div class="card-header">
+				<strong>Message History</strong>
+			</div>
+			<div class="card-body">
+				{% for msg in messages %}
+				<details open="open">
+					<summary>
+						To: {{msg.destiny.courseunit}} 
+						<time datetime="2008-02-14 20:00"> {{msg.create}}</time>
+					</summary>
+					<p>{{msg.text}}</p>
+				</details>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+	<!-- // Message history -->
+</div>
+<style type="text/css">
+	.details > .col-4{
+		font-weight: bolder;
+		/*font-style: ;*/
+		text-transform: uppercase;
+		color: #A9A9A9;
+		/*font-size: 1.5vw;*/
+	}
+	.details > .col-8{
+		text-transform: capitalize;
+		font-weight: 300;
+		color: #989898;
+	}
+	ul{
+		list-style-type: none;
+	}
+</style>
+{% endblock %}
+
+{% block jscript %}
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('.Submit').click(function(){
+			let depart = $('.depart').val();
+			alert(depart);
+			if(depart == 0){
+				$('#depart').css({"display":"block","color":"red"});
+				$('#depart').html('Please select department');
+			}else{
+				$.post("/home/",{
+					csrfmiddlewaretoken:'{{csrf_token}}',
+					depart:depart
+				},function(data){
+					if(data == 1){
+						window.location.replace('/home/');
+					}else{
+						alert("Server error, please try again later");
+					}
+				});
+			}
+		});
+	});
+</script>
+{% endblock %}
